@@ -26,6 +26,11 @@ Pack water around a periclase (MgO) crystal:
 
    solvated = packer.pack(mgo, n_waters=200)
 
+   .. image:: _static/periclase_solvated.png
+      :alt: Solvated Periclase Crystal
+      :align: center
+      :width: 600
+
 Example 2: Reproducible Packing
 --------------------------------
 
@@ -60,3 +65,21 @@ Let the packer determine how many waters fit:
    result = packer.pack(substrate)
    
    print(f"Auto-packed {(len(result) - len(substrate))//3} waters")
+
+Example 4: Complex Surfaces (Brucite)
+--------------------------------------
+
+Packing water around a Brucite (Mg(OH)2) slab with H-termination:
+
+.. code-block:: python
+
+   from water_packer import pack_with_relaxation
+   # ... setup brucite slab ...
+   
+   # Use relaxation to fit waters into tight surface grooves
+   result = pack_with_relaxation(packer, brucite, n_waters=32)
+
+.. image:: _static/brucite_solvated.png
+   :alt: Solvated Brucite Slab
+   :align: center
+   :width: 600

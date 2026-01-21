@@ -124,27 +124,56 @@ def solvate_system(name, atoms, density=1.0):
         n_placed = (len(result) - len(atoms)) // 3
         print(f"  ✓ Placed {n_placed}/{n_waters} waters")
         
+        # Save trajectory/structure
         filename = f"{name.lower()}_solvated.extxyz"
         write(filename, result, format='extxyz')
-        print(f"  ✓ Saved to {filename}")
-        return filename
+        print(f"  ✓ Saved structure to {filename}")
+
+        # Generate PNG for documentation
+        try:
+            import matplotlib.pyplot as plt
+            from ase.visualize.plot import plot_atoms
+            
+            # Create a nice plot
+            fig, ax = plt.subplots(figsize=(8, 8))
+            
+            # Rotate for better view
+            result.rotate(10, 'x')
+            result.rotate(10, 'y')
+            
+            # Plot
+            plot_atoms(result, ax, radii=0.8, rotation=('10x,10y,0z'))
+            ax.set_axis_off()
+            ax.set_title(f"Solvated {name}", fontsize=16)
+            
+            img_filename = f"docs/_static/{name.lower()}_solvated.png"
+            fig.savefig(img_filename, dpi=150, bbox_inches='tight')
+            plt.close(fig)
+            print(f"  ✓ Saved image to {img_filename}")
+            return filename, img_filename
+
+        except Exception as e:
+            print(f"  ⚠ Could not generate image: {e}")
+            return filename, None
         
     except Exception as e:
         print(f"  ❌ Error solvating {name}: {e}")
-        return None
+        return None, None
 
 if __name__ == "__main__":
     generated_files = []
     
     # 1. Periclase
     periclase = create_periclase()
-    f1 = solvate_system("Periclase", periclase)
+    f1, img1 = solvate_system("Periclase", periclase)
     if f1: generated_files.append(f1)
+    if img1: generated_files.append(img1)
     
     # 2. Brucite
     brucite = create_brucite()
-    f2 = solvate_system("Brucite", brucite)
+    f2, img2 = solvate_system("Brucite", brucite)
     if f2: generated_files.append(f2)
+    if img2: generated_files.append(img2)
     
     print("\nSummary:")
     for f in generated_files:

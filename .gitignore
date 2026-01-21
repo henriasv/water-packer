@@ -82,7 +82,5 @@ venv.bak/
 # Benchmark/test outputs
 *.xyz
 *.png
-benchmark_*.py
-test_*.py
 debug_*.py
 verify_*.py

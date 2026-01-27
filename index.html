@@ -233,12 +233,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="water-packer">
-<h1>water-packer<a class="headerlink" href="#water-packer" title="Link to this heading">¶</a></h1>
-<section id="id1">
-<h2>Water Packer<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<h1>Water Packer<a class="headerlink" href="#water-packer" title="Link to this heading">¶</a></h1>
 <p>Pack water molecules into atomic systems for molecular simulations. High-performance, O(1) collision detection using spatial hashing.</p>
 <section id="installation">
-<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h3>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>water-packer
 </pre></div>
 </div>
@@ -248,7 +246,7 @@
 </div>
 </section>
 <section id="quick-start">
-<h3>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h3>
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">water_packer</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterPacker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">molecular_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_bulk_crystal</span>
 
@@ -269,7 +267,7 @@
 <p><img alt="Solvated Periclase" src="https://raw.githubusercontent.com/henriasv/water-packer/main/docs/_static/periclase_solvated.png" /></p>
 </section>
 <section id="features">
-<h3>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h3>
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Multiple input formats</strong>: ASE Atoms, hyobj PeriodicSystem, or raw arrays</p></li>
 <li><p><strong>Species-specific distances</strong>: Different minimum distances per atom pair</p></li>
@@ -280,9 +278,9 @@
 </ul>
 </section>
 <section id="api">
-<h3>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h3>
+<h2>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h2>
 <section id="waterpacker">
-<h4>WaterPacker<a class="headerlink" href="#waterpacker" title="Link to this heading">¶</a></h4>
+<h3>WaterPacker<a class="headerlink" href="#waterpacker" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">WaterPacker</span><span class="p">(</span>
     <span class="n">min_distance</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>        <span class="c1"># Default minimum distance (Å)</span>
     <span class="n">pairwise_distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># Species-specific: {(&#39;O&#39;, &#39;Mg&#39;): 2.0}</span>
@@ -293,7 +291,7 @@
 </div>
 </section>
 <section id="pack-water-convenience-function">
-<h4>pack_water (convenience function)<a class="headerlink" href="#pack-water-convenience-function" title="Link to this heading">¶</a></h4>
+<h3>pack_water (convenience function)<a class="headerlink" href="#pack-water-convenience-function" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">water_packer</span><span class="w"> </span><span class="kn">import</span> <span class="n">pack_water</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">pack_water</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">n_waters</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">water_density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
@@ -321,7 +319,6 @@
 </li>
 </ul>
 </div>
-</section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
 <ul class="simple">
@@ -376,16 +373,13 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">water-packer</a><ul>
-<li><a class="reference internal" href="#id1">Water Packer</a><ul>
+<li><a class="reference internal" href="#">Water Packer</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#api">API</a><ul>
 <li><a class="reference internal" href="#waterpacker">WaterPacker</a></li>
 <li><a class="reference internal" href="#pack-water-convenience-function">pack_water (convenience function)</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

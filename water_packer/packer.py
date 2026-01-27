@@ -149,8 +149,30 @@ class WaterPackerOptimized:
             print(f"Warning: No available volume for water packing.")
             return data
         
+        # Physics safeguard: Check for impossible density requests
+        if n_waters is not None:
+            # Calculate implied density
+            # implied_conc = n_waters / available_volume (molecules/Å³)
+            implied_conc = n_waters / available_volume
+            
+            # Theoretical max density for Random Close Packing (RCP) of spheres
+            # RCP fraction ≈ 0.64
+            # Sphere radius r = min_dist(O,O) / 2
+            min_OO_dist = self.distance_manager.get_min_distance('O', 'O')
+            r = min_OO_dist / 2.0
+            sphere_vol = (4/3) * np.pi * (r**3)
+            max_conc = 0.64 / sphere_vol
+            
+            if implied_conc > max_conc:
+                implied_g_cm3 = implied_conc / WATER_DENSITY_FACTOR
+                max_g_cm3 = max_conc / WATER_DENSITY_FACTOR
+                print(f"\n⚠️  WARNING: Requested packing density is extremely high!")
+                print(f"   - Implied density: {implied_g_cm3:.2f} g/cm³ ({n_waters} waters in {available_volume:.1f} Å³)")
+                print(f"   - Theoretical max (RCP): ~{max_g_cm3:.2f} g/cm³")
+                print(f"   - This will likely fail or take a very long time.\n")
+                
         # Calculate number of waters if not specified
-        if n_waters is None:
+        else:
             target_concentration = self.water_density * WATER_DENSITY_FACTOR
             n_waters = int(available_volume * target_concentration)
             n_waters = max(1, n_waters)

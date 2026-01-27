@@ -235,57 +235,73 @@
         <article role="main" id="furo-main-content">
           <section id="quick-start">
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h1>
+<p>Pack water molecules into atomic systems for molecular simulations. High-performance, O(1) collision detection using spatial hashing.</p>
+<a class="reference internal image-reference" href="_images/periclase_solvated.png"><img alt="Solvated Periclase" class="align-center" src="_images/periclase_solvated.png" width="600" />
+</a>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>Install from PyPI:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>water-packer
 </pre></div>
 </div>
-<p>Or from source:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/henriasv/water-packer
-<span class="nb">cd</span><span class="w"> </span>water-packer
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<p>For <cite>hyobj</cite> support:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;water-packer[hyobj]&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="basic-usage">
 <h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">¶</a></h2>
-<p>Packing water into an empty box:</p>
+<p>The easiest way to get started is by using <cite>molecular-builder</cite> to create your initial structures and then packing water with the native packer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">water_packer</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterPacker</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">ase</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">molecular_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_bulk_crystal</span>
 
-<span class="c1"># Create empty box</span>
-<span class="n">box</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Create a MgO slab</span>
+<span class="n">mgo</span> <span class="o">=</span> <span class="n">create_bulk_crystal</span><span class="p">(</span><span class="s2">&quot;periclase&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">])</span>
 
-<span class="c1"># Pack water</span>
-<span class="n">packer</span> <span class="o">=</span> <span class="n">WaterPacker</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">packer</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">n_waters</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Packed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">//</span><span class="mi">3</span><span class="si">}</span><span class="s2"> water molecules&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Packing around a substrate:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">water_packer</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterPacker</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
-
-<span class="c1"># Load substrate</span>
-<span class="n">substrate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;MgO.cif&#39;</span><span class="p">)</span>
-
-<span class="c1"># Pack with species-specific distances</span>
+<span class="c1"># Create packer and pack water</span>
 <span class="n">packer</span> <span class="o">=</span> <span class="n">WaterPacker</span><span class="p">(</span>
-    <span class="n">pairwise_distances</span><span class="o">=</span><span class="p">{(</span><span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;Mg&#39;</span><span class="p">):</span> <span class="mf">2.5</span><span class="p">},</span>
-    <span class="n">water_density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+    <span class="n">water_density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># target density in g/cm³</span>
+    <span class="n">pairwise_distances</span><span class="o">=</span><span class="p">{(</span><span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;Mg&#39;</span><span class="p">):</span> <span class="mf">2.0</span><span class="p">},</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">packer</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">substrate</span><span class="p">,</span> <span class="n">n_waters</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">packer</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">mgo</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">mgo</span><span class="p">))</span><span class="o">//</span><span class="mi">3</span><span class="si">}</span><span class="s2"> water molecules&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Automatic water count from density:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let packer auto-calculate water count</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">packer</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">substrate</span><span class="p">)</span>  <span class="c1"># n_waters=None → auto-calc</span>
+</section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Multiple input formats</strong>: ASE Atoms, hyobj PeriodicSystem, or raw arrays.</p></li>
+<li><p><strong>Species-specific distances</strong>: Different minimum distances per atom pair.</p></li>
+<li><p><strong>Automatic density calculation</strong>: Computes number of waters from target density.</p></li>
+<li><p><strong>Volume-aware packing</strong>: Accounts for substrate exclusion volume via Monte Carlo probes.</p></li>
+<li><p><strong>Physics Safeguards</strong>: Warns user if requested density exceeds physical packing limits.</p></li>
+<li><p><strong>Hybrid Relaxation</strong>: Supports optional MC/minimization steps for fitting water into tight surface features.</p></li>
+</ul>
+</section>
+<section id="api-overview">
+<h2>API Overview<a class="headerlink" href="#api-overview" title="Link to this heading">¶</a></h2>
+<section id="waterpacker">
+<h3>WaterPacker<a class="headerlink" href="#waterpacker" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">WaterPacker</span><span class="p">(</span>
+    <span class="n">min_distance</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>        <span class="c1"># Default minimum distance (Å)</span>
+    <span class="n">pairwise_distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># Species-specific: {(&#39;O&#39;, &#39;Mg&#39;): 2.0}</span>
+    <span class="n">water_density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>       <span class="c1"># Target density (g/cm³)</span>
+    <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>               <span class="c1"># Random seed</span>
+<span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="convenience-function">
+<h3>Convenience Function<a class="headerlink" href="#convenience-function" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">water_packer</span><span class="w"> </span><span class="kn">import</span> <span class="n">pack_water</span>
+
+<span class="c1"># One-liner for simple packing</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pack_water</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">n_waters</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">water_density</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -347,6 +363,12 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <li><a class="reference internal" href="#">Quick Start</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#api-overview">API Overview</a><ul>
+<li><a class="reference internal" href="#waterpacker">WaterPacker</a></li>
+<li><a class="reference internal" href="#convenience-function">Convenience Function</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

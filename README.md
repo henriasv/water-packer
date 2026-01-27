@@ -19,22 +19,20 @@ pip install -e ".[hyobj]"
 
 ```python
 from water_packer import WaterPacker
-from ase.io import read
+from molecular_builder import create_bulk_crystal
 
-# Load a structure
-mgo = read('periclase.cif')
+# Create a MgO slab
+mgo = create_bulk_crystal("periclase", [15.0, 15.0, 15.0])
 
-# Create packer with custom distance constraints
+# Create packer and pack water
 packer = WaterPacker(
-    min_distance=2.0,  # Default fallback distance
-    pairwise_distances={('O', 'Mg'): 2.5},  # Species-specific
     water_density=1.0,  # g/cm³
-    seed=42,  # For reproducibility
+    pairwise_distances={('O', 'Mg'): 2.0},
+    seed=42,
 )
 
-# Pack water
 result = packer.pack(mgo)
-print(f"Added {len(result) - len(mgo)} atoms")
+print(f"Added {(len(result) - len(mgo))//3} water molecules")
 ```
 
 ## Features

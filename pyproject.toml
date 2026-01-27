@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "water-packer"
-version = "0.2.4"
+version = "0.2.5"
 readme = "README.md"
 description = "Pack water molecules into atomic systems for molecular simulations"
 requires-python = ">=3.9"
@@ -22,6 +22,7 @@ Documentation = "https://henriasv.github.io/water-packer/"
 [project.optional-dependencies]
 hyobj = ["hyobj"]
 dev = ["pytest>=7.0", "pytest-cov"]
+docs = ["sphinx", "furo", "sphinx-autodoc-typehints", "myst-parser"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

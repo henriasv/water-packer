@@ -62,5 +62,9 @@ WaterPacker(
 ```python
 from water_packer import pack_water
 
-result = pack_water(system, n_waters=10, water_density=1.0)
+# Option A: Pack exactly 10 waters
+result = pack_water(system, n_waters=10)
+
+# Option B: Pack using target density (mutually exclusive with n_waters)
+result = pack_water(system, water_density=1.0)
 ```

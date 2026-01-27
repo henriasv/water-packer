@@ -267,7 +267,7 @@ def pack_water(
     n_waters: Optional[int] = None,
     min_distance: float = 2.0,
     pairwise_distances: Optional[Dict[Tuple[str, str], float]] = None,
-    water_density: float = 1.0,
+    water_density: Optional[float] = None,
     seed: Optional[int] = None,
 ) -> Any:
     """
@@ -275,10 +275,16 @@ def pack_water(
     
     Uses optimized implementation with batch generation and spatial hash grid.
     """
+    if n_waters is not None and water_density is not None:
+        raise ValueError("Cannot specify both 'n_waters' and 'water_density'.")
+    
+    if n_waters is None and water_density is None:
+        water_density = 1.0
+        
     packer = WaterPacker(
         min_distance=min_distance,
         pairwise_distances=pairwise_distances,
-        water_density=water_density,
+        water_density=water_density or 1.0,
         seed=seed,
     )
     return packer.pack(system, n_waters=n_waters)

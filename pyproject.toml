@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "water-packer"
-version = "0.2.1"
+version = "0.2.2"
+readme = "README.md"
 description = "Pack water molecules into atomic systems for molecular simulations"
 requires-python = ">=3.9"
 dependencies = [

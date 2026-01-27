@@ -1,6 +1,8 @@
 # Water Packer
 
-Pack water molecules into atomic systems for molecular simulations.
+Pack water molecules into atomic systems for molecular simulations. High-performance, O(1) collision detection using spatial hashing.
+
+![Solvated Periclase](https://raw.githubusercontent.com/henriasv/water-packer/main/docs/_static/periclase_solvated.png)
 
 ## Installation
 

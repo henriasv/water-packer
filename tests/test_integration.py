@@ -90,14 +90,15 @@ def test_partial_packing():
     packer = WaterPacker(
         min_distance=3.0,  # Very tight constraints
         seed=42,
+        batch_size=1000,   # Small batch for fast failure
     )
     
-    # Request many waters - won't all fit
-    result = packer.pack(atoms, n_waters=50)
+    # Request a few waters - won't all fit in 5x5x5 with 3.0Å min dist
+    result = packer.pack(atoms, n_waters=20)
     
     n_placed = len(result) // 3
     # Should place some but not all
-    assert 0 < n_placed < 50
+    assert 0 < n_placed < 20
 
 
 def test_with_existing_structure():

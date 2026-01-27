@@ -6,13 +6,14 @@ sys.path.insert(0, os.path.abspath('..'))
 project = 'water-packer'
 copyright = '2026'
 author = 'Henrik Andersen Sveinsson'
-release = '0.2.3'
+release = '0.2.4'
 
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx_autodoc_typehints',
+    'myst_parser',
 ]
 
 templates_path = ['_templates']

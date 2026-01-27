@@ -26,10 +26,10 @@ Pack water around a periclase (MgO) crystal:
 
    solvated = packer.pack(mgo, n_waters=200)
 
-   .. image:: _static/periclase_solvated.png
-      :alt: Solvated Periclase Crystal
-      :align: center
-      :width: 600
+.. image:: _static/periclase_solvated.png
+   :alt: Solvated Periclase Crystal
+   :align: center
+   :width: 600
 
 Example 2: Reproducible Packing
 --------------------------------
@@ -52,6 +52,11 @@ Generate identical structures using seeds:
        result2.get_positions()
    )
 
+.. image:: _static/waterbox_solvated.png
+   :alt: Reproducible Solvation Box
+   :align: center
+   :width: 600
+
 Example 3: Auto-calculate Water Count
 --------------------------------------
 
@@ -65,6 +70,11 @@ Let the packer determine how many waters fit:
    result = packer.pack(substrate)
    
    print(f"Auto-packed {(len(result) - len(substrate))//3} waters")
+
+.. image:: _static/waterbox_solvated.png
+   :alt: Auto-packed Water Box
+   :align: center
+   :width: 600
 
 Example 4: Complex Surfaces (Brucite)
 --------------------------------------

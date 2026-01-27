@@ -128,12 +128,15 @@ def solvate_system(name, atoms, density=1.0):
             # Create a nice plot
             fig, ax = plt.subplots(figsize=(8, 8))
             
-            # Rotate for better view
-            result.rotate(10, 'x')
-            result.rotate(10, 'y')
+            # Rotate for better view (side view)
+            # result.rotate(90, 'x') # Actually plot_atoms rotation is easier to control
             
             # Plot
-            plot_atoms(result, ax, radii=0.8, rotation=('10x,10y,0z'))
+            # 90x rotates so z-axis is vertical? No, 90x rotates around x. 
+            # If slab is in XY plane (Z normal), we want to see it from the side (along X or Y).
+            # Default view is Z coming out of screen (XY plane).
+            # -90x rotates Z to Y (up). So we see X-Z plane.
+            plot_atoms(result, ax, radii=0.8, rotation=('-90x,0y,0z'))
             ax.set_axis_off()
             ax.set_title(f"Solvated {name}", fontsize=16)
             

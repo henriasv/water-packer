@@ -378,8 +378,30 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: No available volume for water packing.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">data</span>
         
+        <span class="c1"># Physics safeguard: Check for impossible density requests</span>
+        <span class="k">if</span> <span class="n">n_waters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Calculate implied density</span>
+            <span class="c1"># implied_conc = n_waters / available_volume (molecules/Å³)</span>
+            <span class="n">implied_conc</span> <span class="o">=</span> <span class="n">n_waters</span> <span class="o">/</span> <span class="n">available_volume</span>
+            
+            <span class="c1"># Theoretical max density for Random Close Packing (RCP) of spheres</span>
+            <span class="c1"># RCP fraction ≈ 0.64</span>
+            <span class="c1"># Sphere radius r = min_dist(O,O) / 2</span>
+            <span class="n">min_OO_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_manager</span><span class="o">.</span><span class="n">get_min_distance</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">min_OO_dist</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">sphere_vol</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">max_conc</span> <span class="o">=</span> <span class="mf">0.64</span> <span class="o">/</span> <span class="n">sphere_vol</span>
+            
+            <span class="k">if</span> <span class="n">implied_conc</span> <span class="o">&gt;</span> <span class="n">max_conc</span><span class="p">:</span>
+                <span class="n">implied_g_cm3</span> <span class="o">=</span> <span class="n">implied_conc</span> <span class="o">/</span> <span class="n">WATER_DENSITY_FACTOR</span>
+                <span class="n">max_g_cm3</span> <span class="o">=</span> <span class="n">max_conc</span> <span class="o">/</span> <span class="n">WATER_DENSITY_FACTOR</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠️  WARNING: Requested packing density is extremely high!&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Implied density: </span><span class="si">{</span><span class="n">implied_g_cm3</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> g/cm³ (</span><span class="si">{</span><span class="n">n_waters</span><span class="si">}</span><span class="s2"> waters in </span><span class="si">{</span><span class="n">available_volume</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> Å³)&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Theoretical max (RCP): ~</span><span class="si">{</span><span class="n">max_g_cm3</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> g/cm³&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - This will likely fail or take a very long time.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                
         <span class="c1"># Calculate number of waters if not specified</span>
-        <span class="k">if</span> <span class="n">n_waters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="n">target_concentration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">water_density</span> <span class="o">*</span> <span class="n">WATER_DENSITY_FACTOR</span>
             <span class="n">n_waters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">available_volume</span> <span class="o">*</span> <span class="n">target_concentration</span><span class="p">)</span>
             <span class="n">n_waters</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_waters</span><span class="p">)</span>

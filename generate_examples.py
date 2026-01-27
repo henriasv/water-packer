@@ -9,19 +9,31 @@ from ase.build import bulk
 from ase.io import write
 from water_packer import WaterPacker, pack_with_relaxation
 
+from molecular_builder import create_bulk_crystal
+
 def create_periclase():
-    """Create a Periclase (MgO) slab."""
+    """Create a Periclase (MgO) slab using molecular-builder."""
     print("Creating Periclase (MgO) slab...")
-    # Standard rocksalt structure - use cubic cell for easy slab making
-    fatoms = bulk('MgO', 'rocksalt', a=4.21, cubic=True)
     
-    # Replicate to make a decent size slab (approx 20x20 Å)
-    # 5x5x3 unit cells
-    atoms = fatoms.repeat((5, 5, 3))
+    # Create bulk unit crystal ([1,1,1] means 1 unit cell? No, size argument)
+    # create_bulk_crystal returns an ase.Atoms object
+    # For cubic, size is usually array like [a, b, c] dimensions or repeat?
+    # Checking molecular_builder.core:
+    #   crystal = crystals[name]
+    #   atoms = ase.spacegroup.crystal(..., cellpar=[a,b,c, ...])
+    #   atoms = atoms.repeat(np.ceil(size / atoms.cell.lengths())) ?
+    # Actually create_bulk_crystal implementation:
+    #   ... creates crystal ...
+    #   if size is not None: repeats
+    # But size is in Angstroms? "size: size of the bulk crystal"
+    # Let's provide a size that ensures we get enough repeats.
+    # Periclase a=4.21. 5*4.21=21.05.
+    
+    atoms = create_bulk_crystal("periclase", [22.0, 22.0, 13.0])
     
     # Add vacuum for water (15 Å)
     cell = atoms.get_cell()
-    print(f"  Initial size: {cell[0,0]:.2f} x {cell[1,1]:.2f} x {cell[2,2]:.2f} Å")
+    print(f"  Bulky size: {cell[0,0]:.2f} x {cell[1,1]:.2f} x {cell[2,2]:.2f} Å")
     
     cell[2, 2] += 15.0
     atoms.set_cell(cell)
@@ -30,47 +42,26 @@ def create_periclase():
     return atoms
 
 def create_brucite():
-    """Create Brucite (Mg(OH)2) slab from CIF parameters with H-termination."""
+    """Create Brucite (Mg(OH)2) slab using molecular-builder."""
     print("Creating Brucite (Mg(OH)2) slab...")
     
-    # CIF Parameters
-    a = 3.142
-    c = 4.766
-    
-    # Hexagonal cell (gamma=120)
-    cell = np.array([
-        [a, 0.0, 0.0],
-        [-0.5 * a, np.sqrt(3)/2 * a, 0.0],
-        [0.0, 0.0, c]
-    ])
-    
-    # Fractional coordinates from CIF (shifted +0.5 Z for H-termination)
-    frac_positions = np.array([
-        [0.0, 0.0, 0.5],              # Mg
-        [1/3, 2/3, 0.2216 + 0.5],     # O
-        [2/3, 1/3, -0.2216 + 0.5],    # O
-        [1/3, 2/3, 0.4303 + 0.5],     # H
-        [2/3, 1/3, -0.4303 + 0.5],    # H
-    ])
-    
-    symbols = ['Mg', 'O', 'O', 'H', 'H']
-    
-    # Convert to cartesian
-    positions = np.dot(frac_positions, cell)
-    
-    base = Atoms(symbols=symbols, positions=positions, cell=cell, pbc=True)
-    
-    # Replicate to make larger slab
-    # 3x3x2
-    atoms = base.repeat((3, 3, 2))
+    # Brucite a=3.14, c=4.77.
+    # 3x3x2 repeats -> ~9.4 x 9.4 x 9.5
+    # Warning: create_bulk_crystal takes size in Angstroms?
+    # Let's ask for 10x10x10 to be safe
+    atoms = create_bulk_crystal("brucite", [10.0, 10.0, 10.0])
     
     # Add vacuum
     cell = atoms.get_cell()
-    print(f"  Initial size: {cell[0,0]:.2f} x {cell[1,1]:.2f} x {cell[2,2]:.2f} Å(z)")
+    print(f"  Bulk size: {cell[0,0]:.2f} x {cell[1,1]:.2f} x {cell[2,2]:.2f} Å(z)")
+    
+    # User warning: Brucite cutting might misplace OH.
+    # The crystal comes from ase.spacegroup.crystal.
+    # center(axis=2) should handle the vacuum placement safely AROUND the atoms.
     
     cell[2, 2] += 15.0
     atoms.set_cell(cell)
-    atoms.center(axis=2)
+    atoms.center(axis=2) # This is key
     
     return atoms
 
@@ -160,6 +151,15 @@ def solvate_system(name, atoms, density=1.0):
         print(f"  ❌ Error solvating {name}: {e}")
         return None, None
 
+def create_water_box():
+    """Create a simple empty box for water packing examples."""
+    print("Creating empty box for water packing...")
+    # 15x15x15 Å box
+    a = 15.0
+    cell = np.eye(3) * a
+    atoms = Atoms(cell=cell, pbc=True)
+    return atoms
+
 if __name__ == "__main__":
     generated_files = []
     
@@ -175,6 +175,14 @@ if __name__ == "__main__":
     if f2: generated_files.append(f2)
     if img2: generated_files.append(img2)
     
+    # 3. Generic Box (for reproducible & auto examples)
+    water_box = create_water_box()
+    f3, img3 = solvate_system("WaterBox", water_box, density=1.0)
+    if f3: generated_files.append(f3)
+    if img3: generated_files.append(img3)
+
     print("\nSummary:")
     for f in generated_files:
         print(f"- {f}")
+
+

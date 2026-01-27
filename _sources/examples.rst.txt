@@ -9,22 +9,21 @@ Pack water around a periclase (MgO) crystal:
 .. code-block:: python
 
    from water_packer import WaterPacker
-   from ase.build import bulk
+   from molecular_builder import create_bulk_crystal
 
-   # Create MgO crystal
-   mgo = bulk('MgO', 'rocksalt', a=4.21).repeat((3, 3, 3))
+   # Create MgO crystal using molecular-builder
+   mgo = create_bulk_crystal("periclase", [15.0, 15.0, 15.0])
 
    # Pack water with Mg-O specific distance
    packer = WaterPacker(
        pairwise_distances={
            ('O', 'Mg'): 2.0,  # Water O to Mg distance
-           ('O', 'O'): 2.8,   # Between MgO O and water O
        },
        water_density=1.0,
        seed=42
    )
 
-   solvated = packer.pack(mgo, n_waters=200)
+   solvated = packer.pack(mgo)
 
 .. image:: _static/periclase_solvated.png
    :alt: Solvated Periclase Crystal
